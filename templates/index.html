@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Face Mask Detection - Dual Camera</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Roboto', sans-serif;
+            color: #343a40;
+        }
+
+        .navbar {
+            padding: 0.7rem;
+            background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar a {
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .navbar-brand {
+            color: #ffffff !important;
+        }
+
+        .navbar .buttons-container {
+            margin-left: auto;
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-custom {
+            background-color: #6c63ff;
+            color: white;
+            border-radius: 20px;
+            padding: 8px 25px;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            background-color: #5a55da;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .camera-container {
+            position: relative;
+            border: 2px solid #343a40;
+            border-radius: 15 px;
+            padding: 10px;
+            background-color: #ffffff;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .camera-container:hover {
+            transform: scale(1.03);
+        }
+
+        .camera-title {
+            text-align: center;
+            color: #343a40;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .camera-feed {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+
+        .stat-card {
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1rem;
+            background-color: #ffffff;
+            transition: transform 0.3s ease-in-out, background-color 0.3s ease;
+            max-width: 200px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-card h2 {
+            font-size: 1.7rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            font-size: 1rem;
+        }
+
+        .bg-success {
+            background: linear-gradient(90deg, #28a745 0%, #218838 100%);
+            color: #ffffff;
+        }
+
+        .bg-danger {
+            background: linear-gradient(90deg, #dc3545 0%, #c82333 100%);
+            color: #ffffff;
+        }
+
+        footer {
+            background-color: #2a2a2a;
+            color: #ffffff;
+            padding: 15px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+            text-align: center;
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        footer p {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .col-md-6 {
+                margin-bottom: 30px;
+            }
+
+            footer {
+                position: relative;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#">Face Mask Detection by Nafil</a>
+        <div class="buttons-container">
+            <a href="#" class="btn btn-custom" onclick="location.reload();"> ↻ </a>
+            <a href="/download_report" class="btn btn-custom">Download Report</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="camera-container">
+                    <h3 class="camera-title">Camera 1</h3>
+                    <img src="{{ url_for('video_feed1') }}" class="camera-feed" alt="Camera 1 Feed">
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="camera-container">
+                    <h3 class="camera-title">Camera 2</h3>
+                    <img src="{{ url_for('video_feed2') }}" class="camera-feed" alt="Camera 2 Feed">
+                </div>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="row justify-content-center">
+            <div class="col-md-3">
+                <div class="stat-card bg-success text-white">
+                    <h2 id="with_Mask">0</h2>
+                    <p>People with Masks</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card bg-danger text-white">
+                    <h2 id="without_Mask">0</h2>
+                    <p>People without Masks</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card bg-info text-white">
+                    <h2 id="avg_Confidence">0.00</h2>
+                    <p>Average Confidence</p>
+                </div>
+            </div>
+        </div>
+    </div>    
+
+    <footer>
+        <p>&copy; 2024-2025 Face Mask Detection by Nafil | All Rights Reserved</p>
+    </footer>
+
+    <script>
+        function fetchMaskStats() {
+            fetch('/mask_stats')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('with_Mask').innerText = data.with_mask;
+                    document.getElementById('without_Mask').innerText = data.without_mask;
+                    document.getElementById('avg_Confidence').innerText = data.avg_confidence;
+                })
+                .catch(error => console.error('Error fetching mask stats:', error));
+        }
+
+        // Fetch stats every 10 seconds
+        setInterval(fetchMaskStats, 10000);
+    </script>
+
+</body>
+
+</html>

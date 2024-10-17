@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mask Detection Analytics Dashboard</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .dashboard-container {
+            margin-top: 50px;
+        }
+        .stat-card {
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .stat-card h2 {
+            font-size: 2.5rem;
+        }
+        .stat-card p {
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-light bg-danger">
+  <a class="navbar-brand text-white" href="#">Face Mask Detection Dashboard</a>
+</nav>
+
+<div class="container dashboard-container">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="stat-card bg-success text-white">
+                <h2 id="withMaskCount">0</h2>
+                <p>People with Masks</p>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="stat-card bg-danger text-white">
+                <h2 id="withoutMaskCount">0</h2>
+                <p>People without Masks</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateStats() {
+        fetch('/mask_stats')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('withMaskCount').innerText = data.with_mask;
+                document.getElementById('withoutMaskCount').innerText = data.without_mask;
+            })
+            .catch(error => console.error('Error fetching mask stats:', error));
+    }
+
+    // Update stats every 2 seconds
+    setInterval(updateStats, 2000);
+</script>
+
+</body>
+</html>
