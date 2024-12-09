@@ -26,8 +26,6 @@ The Face Mask Detector is a web application developed using Flask and deep learn
 - TensorFlow / Keras
 - OpenCV
 - HTML/CSS/JavaScript
-- Git
-- GitHub
 
 ## Installation
 To set up the project locally, follow these steps:
